@@ -11,16 +11,16 @@ export async function main(ns: NS): Promise<void> {
     function getAllServers() {
         allServers = []
         allServers.push("home")
-        const findAdjasentServers = (hostname: string) => {
+        const findAdjacentServers = (hostname: string) => {
             ns.scan(hostname)
                 .forEach((server) => {
                     if (!allServers.includes(server)) {
                         allServers.push(server)
-                        findAdjasentServers(server)
+                        findAdjacentServers(server)
                     }
                 })
         }
-        findAdjasentServers("home")
+        findAdjacentServers("home")
     }
 
     getAllServers()

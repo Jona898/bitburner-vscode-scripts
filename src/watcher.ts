@@ -1,7 +1,7 @@
 import { NS, ProcessInfo } from '@ns'
 
 export async function main(ns: NS): Promise<void> {
-    const hashes: Record<string,number> = {}
+    const hashes: Record<string, number> = {}
 
     const files = ns.ls('home', '.js')
     for (const file of files) {
@@ -17,14 +17,14 @@ export async function main(ns: NS): Promise<void> {
             const hash = getHash(contents)
 
             if (hash != hashes[file]) {
-                ns.tprintf(`INFO: Detected change in ${file}`)
+                ns.tprint(`INFO: Detected change in ${file}`)
 
                 const processes = ns.ps().filter((p: ProcessInfo) => {
                     return p.filename == file
                 })
 
                 for (const process of processes) {
-                    ns.tprintf(`INFO: Restarting ${process.filename} ${process.args} -t ${process.threads}`)
+                    ns.tprint(`INFO: Restarting ${process.filename} ${process.args} -t ${process.threads}`)
                     if (process.filename != ns.getScriptName()) {
                         ns.kill(process.pid)
                         ns.run(process.filename, process.threads, ...process.args)

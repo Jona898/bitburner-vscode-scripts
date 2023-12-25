@@ -35,7 +35,7 @@ export async function main(ns: NS): Promise<void> {
 
 
 
-    /**  @returns {number} current existeng cracks */
+    /**  @returns {number} current existing cracks */
     function getCurrentPortCrack() {
         let crackNumber = 0
         for (const crack in portCracks) {
@@ -72,16 +72,16 @@ export async function main(ns: NS): Promise<void> {
         if (gainRootRights(hostname) || hostname == "home") {
             // ns.killall(hostname)
             // ns.scriptKill(scriptName, hostname)
-            let numberoftimes = Math.floor((ns.getServerMaxRam(hostname) - ns.getServerUsedRam(hostname)) / ramScript)
+            let numberOfTimes = Math.floor((ns.getServerMaxRam(hostname) - ns.getServerUsedRam(hostname)) / ramScript)
             if (hostname == "home") {
-                numberoftimes = Math.floor((ns.getServerMaxRam(hostname) * 0.75 - ns.getServerUsedRam(hostname)) / ramScript)
-                if (numberoftimes < 1)
+                numberOfTimes = Math.floor((ns.getServerMaxRam(hostname) * 0.75 - ns.getServerUsedRam(hostname)) / ramScript)
+                if (numberOfTimes < 1)
                     return false
             }
             else
                 ns.scp(scriptName, hostname, "home")
-            if (numberoftimes > 0)
-                ns.exec(scriptName, hostname, numberoftimes, target)
+            if (numberOfTimes > 0)
+                ns.exec(scriptName, hostname, numberOfTimes, target)
             return true
         }
         else
@@ -90,7 +90,7 @@ export async function main(ns: NS): Promise<void> {
 
 
 
-    function infestAdjasentServers(hostname: string) {
+    function infestAdjacentServers(hostname: string) {
         const foundServers = ns.scan(hostname)
 
         foundServers.forEach((server) => {
@@ -98,20 +98,20 @@ export async function main(ns: NS): Promise<void> {
                 checkedServers.push(server)
                 const scriptDeployed = deployScriptOnServer(server)
                 if (scriptDeployed) {
-                    infestAdjasentServers(server)
+                    infestAdjacentServers(server)
                 }
             }
         })
     }
 
     function listMoneyHackableServers() {
-        const hackingLevelTresh = ns.getHackingLevel() * 0.66
+        const hackingLevelThresh = ns.getHackingLevel() * 0.66
 
         const serverMoney: { "hostname": string, hackingLevel: number, money: number }[] = []
 
         checkedServers.forEach(
             hostname => {
-                if (ns.getServerRequiredHackingLevel(hostname) < hackingLevelTresh
+                if (ns.getServerRequiredHackingLevel(hostname) < hackingLevelThresh
                     && ns.getServerMaxMoney(hostname) > 0) {
                     serverMoney.push({
                         hostname: hostname,
@@ -143,7 +143,7 @@ export async function main(ns: NS): Promise<void> {
 
     deployScriptOnServer("home")
 
-    infestAdjasentServers("home")
+    infestAdjacentServers("home")
 
 
     ns.getPurchasedServers().forEach((pserv) => {

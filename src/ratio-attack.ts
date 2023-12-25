@@ -22,8 +22,8 @@ export async function main(ns: NS): Promise<void> {
     const EXTRA_GROW_THREADS = 2
 
     const WEAKEN_PER_THREAD = 0.05 / EXTRA_WEAKEN_THREADS // ns.weakenAnalyze(1, 1)
-    const GROWTH_SECURITY_INCRESE_THREAD = 0.004// ns.growthAnalyzeSecurity(1, 'n00dles', 1)
-    const HACK_SECURITY_INCRESE_THREAD = 0.002// ns.hackAnalyzeSecurity(1, 'n00dles')
+    const GROWTH_SECURITY_INCREASE_THREAD = 0.004// ns.growthAnalyzeSecurity(1, 'n00dles', 1)
+    const HACK_SECURITY_INCREASE_THREAD = 0.002// ns.hackAnalyzeSecurity(1, 'n00dles')
 
     const MULTIPLIER_MONEY = dataFlags.mu as number > 1.05 ? dataFlags.mu as number : 2
     const HACK_PERCENT = ((MULTIPLIER_MONEY - 1) / MULTIPLIER_MONEY)
@@ -34,7 +34,7 @@ export async function main(ns: NS): Promise<void> {
     //    Create Hack scripts
     // ================================================
 
-    type scriptValueType = { filename: string, algorytm: string, isLoop: boolean, needsTime: (host: string) => number, scriptRam: number }
+    type scriptValueType = { filename: string, algorithm: string, isLoop: boolean, needsTime: (host: string) => number, scriptRam: number }
 
     const scripts: {
         "growLoop": scriptValueType,
@@ -47,33 +47,33 @@ export async function main(ns: NS): Promise<void> {
         /** @summary  Script to grow money on Server  
          * arg[0] target  
          * arg[1] id  
-         * arg[2] waitMs bevore start */
-        "growLoop": { filename: "bin/z_growLoop.js", algorytm: "ns.grow", isLoop: true, needsTime: ns.getGrowTime, scriptRam: 2 },
+         * arg[2] waitMs before start */
+        "growLoop": { filename: "bin/z_growLoop.js", algorithm: "ns.grow", isLoop: true, needsTime: ns.getGrowTime, scriptRam: 2 },
         /** @summary  Script to weaken security on Server  
         * arg[0] target  
         * arg[1] id  
-        * arg[2] waitMs bevore start */
-        "weakLoop": { filename: "bin/z_weakLoop.js", algorytm: "ns.weaken", isLoop: true, needsTime: ns.getWeakenTime, scriptRam: 2 },
+        * arg[2] waitMs before start */
+        "weakLoop": { filename: "bin/z_weakLoop.js", algorithm: "ns.weaken", isLoop: true, needsTime: ns.getWeakenTime, scriptRam: 2 },
         /** @summary  Script to extract money from Server  
          * arg[0] target  
          * arg[1] id  
-         * arg[2] waitMs bevore start */
-        "hackLoop": { filename: "bin/z_hackLoop.js", algorytm: "ns.hack", isLoop: true, needsTime: ns.getHackTime, scriptRam: 2 },
+         * arg[2] waitMs before start */
+        "hackLoop": { filename: "bin/z_hackLoop.js", algorithm: "ns.hack", isLoop: true, needsTime: ns.getHackTime, scriptRam: 2 },
         /** @summary  Script to grow money on Server  
         * arg[0] target  
         * arg[1] id  
-        * arg[2] waitMs bevore start */
-        "growOnce": { filename: "bin/z_growOnce.js", algorytm: "ns.grow", isLoop: false, needsTime: ns.getGrowTime, scriptRam: 2 },
+        * arg[2] waitMs before start */
+        "growOnce": { filename: "bin/z_growOnce.js", algorithm: "ns.grow", isLoop: false, needsTime: ns.getGrowTime, scriptRam: 2 },
         /** @summary  Script to weaken security on Server  
         * arg[0] target  
         * arg[1] id  
-        * arg[2] waitMs bevore start */
-        "weakOnce": { filename: "bin/z_weakOnce.js", algorytm: "ns.weaken", isLoop: false, needsTime: ns.getWeakenTime, scriptRam: 2 },
+        * arg[2] waitMs before start */
+        "weakOnce": { filename: "bin/z_weakOnce.js", algorithm: "ns.weaken", isLoop: false, needsTime: ns.getWeakenTime, scriptRam: 2 },
         /** @summary  Script to extract money from Server  
          * arg[0] target  
          * arg[1] id  
-         * arg[2] waitMs bevore start */
-        "hackOnce": { filename: "bin/z_hackOnce.js", algorytm: "ns.hack", isLoop: false, needsTime: ns.getHackTime, scriptRam: 2 }
+         * arg[2] waitMs before start */
+        "hackOnce": { filename: "bin/z_hackOnce.js", algorithm: "ns.hack", isLoop: false, needsTime: ns.getHackTime, scriptRam: 2 }
     }
 
 
@@ -83,7 +83,7 @@ export async function main(ns: NS): Promise<void> {
     ns.print("wait for " + ns.args[2] / 1000 + "s");
     await ns.sleep(ns.args[2]);
   do {
-    await ${scripts[type].algorytm}(ns.args[0]);
+    await ${scripts[type].algorithm}(ns.args[0]);
   } while(${scripts[type].isLoop})
 }`
     }
@@ -123,16 +123,16 @@ export async function main(ns: NS): Promise<void> {
 
     function getAllServers() {
         allServers.add("home")
-        const findAdjasentServers = (hostname: string) => {
+        const findAdjacentServers = (hostname: string) => {
             ns.scan(hostname)
                 .forEach((server) => {
                     if (!allServers.has(server)) {
                         allServers.add(server)
-                        findAdjasentServers(server)
+                        findAdjacentServers(server)
                     }
                 })
         }
-        findAdjasentServers("home")
+        findAdjacentServers("home")
     }
 
 
@@ -223,7 +223,7 @@ export async function main(ns: NS): Promise<void> {
     let attackers: string[] = []
     function updateAttackServers() {
         attackers = hackedServers
-            .filter(serv => ns.hasRootAccess(serv) && ns.getServerMaxRam(serv) > 0)
+            .filter(server => ns.hasRootAccess(server) && ns.getServerMaxRam(server) > 0)
             .sort((a, b) => ns.getServerMaxRam(b) - ns.getServerMaxRam(a))
 
         ns.print(`Attackers: ${attackers.join(", ")}`)
@@ -246,19 +246,19 @@ export async function main(ns: NS): Promise<void> {
     const weakeningTargets_Set = new Set<string>()
     const weakenedTargets: string[] = []
 
-    function formatTime(milisec: number): string {
-        // const secTot = milisec / 1000
+    function formatTime(millisecond: number): string {
+        // const secTot = millisecond / 1000
         // const min = Math.floor(secTot / 60)
         // const sec=Math.ceil(secTot - min * 60)
-        return `${(milisec / 60_000).toFixed(2)}m`
+        return `${(millisecond / 60_000).toFixed(2)}m`
     }
 
     function updateAllTargets() {
-        const hackingLevelTresh = Math.max(ns.getHackingLevel() * 0.6, 1)
+        const hackingLevelThresh = Math.max(ns.getHackingLevel() * 0.6, 1)
 
         // for (let hostname of hackedServers) {
         //   const server = ns.getServer(hostname)
-        //   if (server.requiredHackingSkill < hackingLevelTresh
+        //   if (server.requiredHackingSkill < hackingLevelThresh
         //     && server.moneyMax > 0)
         //     targets.push(hostname)
         // }
@@ -266,7 +266,7 @@ export async function main(ns: NS): Promise<void> {
 
         hackedServers
             .filter(hostname => {
-                return (ns.getServerRequiredHackingLevel(hostname) < hackingLevelTresh
+                return (ns.getServerRequiredHackingLevel(hostname) < hackingLevelThresh
                     || ns.getServerRequiredHackingLevel(hostname) == 1)
                     && ns.getServerMaxMoney(hostname) > 0
             })
@@ -392,7 +392,7 @@ export async function main(ns: NS): Promise<void> {
 
         ns.tprint(server.hostname.padEnd(18)
             + " " + String(server.requiredHackingLevel).padStart(4)
-            + " Sval-" + server.calculatedServerValue.toFixed(3).padStart(7)
+            + " SVal-" + server.calculatedServerValue.toFixed(3).padStart(7)
             + ": " + ns.formatNumber(ns.getServerMoneyAvailable(server.hostname), 1).padStart(6)
             + "$ / " + ns.formatNumber(server.maxMoney, 1).padStart(6)
             + "$ Wt-" + formatTime(server.weakenTime()).padStart(6)
@@ -411,8 +411,8 @@ export async function main(ns: NS): Promise<void> {
 
 
     function calculateServerValue(server: ServerForHackingInfo) {
-        const hackingLevelTresh = ns.getHackingLevel() * 0.6
-        if (server.requiredHackingLevel < hackingLevelTresh) {
+        const hackingLevelThresh = ns.getHackingLevel() * 0.6
+        if (server.requiredHackingLevel < hackingLevelThresh) {
             server.calculatedServerValue =
                 server.maxMoney / (
                     server.weakenThreads * server.weakenTime()
@@ -469,8 +469,8 @@ export async function main(ns: NS): Promise<void> {
         if (target.hackThreads < 1) target.hackThreads = 1
 
         target.weakenThreads = Math.ceil(
-            (target.growthThreads * GROWTH_SECURITY_INCRESE_THREAD
-                + target.hackThreads * HACK_SECURITY_INCRESE_THREAD)
+            (target.growthThreads * GROWTH_SECURITY_INCREASE_THREAD
+                + target.hackThreads * HACK_SECURITY_INCREASE_THREAD)
             / WEAKEN_PER_THREAD
         )
         if (target.weakenThreads < 1) target.weakenThreads = 1
@@ -500,17 +500,17 @@ export async function main(ns: NS): Promise<void> {
                 : 500000
             : 0
         const additionalSecurityGrowth = Math.ceil(ns.growthAnalyzeSecurity(growthThreads, target, 1))
-        const weakenAmmount1Thread = ns.weakenAnalyze(1, 1)
-        const weakenThreadsToMin = Math.ceil((ns.getServerSecurityLevel(target) - ns.getServerMinSecurityLevel(target)) / weakenAmmount1Thread)
-        const weakenThreadsForGrowth = Math.ceil((additionalSecurityGrowth * 1.1) / weakenAmmount1Thread)
+        const weakenAmount1Thread = ns.weakenAnalyze(1, 1)
+        const weakenThreadsToMin = Math.ceil((ns.getServerSecurityLevel(target) - ns.getServerMinSecurityLevel(target)) / weakenAmount1Thread)
+        const weakenThreadsForGrowth = Math.ceil((additionalSecurityGrowth * 1.1) / weakenAmount1Thread)
 
 
-        let weakenStarted = startProcesOnFreeMomory("weakOnce", target, 0, weakenThreadsToMin) == 0
+        let weakenStarted = startProcessOnFreeMemory("weakOnce", target, 0, weakenThreadsToMin) == 0
 
-        const multiplierPartProcersses = Math.min(getTotalFreeRam() / (growthThreads * scripts.growLoop.scriptRam + weakenThreadsForGrowth * scripts.weakLoop.scriptRam), 1)
+        const multiplierPartProcesses = Math.min(getTotalFreeRam() / (growthThreads * scripts.growLoop.scriptRam + weakenThreadsForGrowth * scripts.weakLoop.scriptRam), 1)
 
-        const growStarted = startProcesOnFreeMomory("growOnce", target, 0, Math.ceil(growthThreads * multiplierPartProcersses)) == 0
-        weakenStarted &&= startProcesOnFreeMomory("weakOnce", target, 0, Math.ceil(weakenThreadsForGrowth * multiplierPartProcersses)) == 0
+        const growStarted = startProcessOnFreeMemory("growOnce", target, 0, Math.ceil(growthThreads * multiplierPartProcesses)) == 0
+        weakenStarted &&= startProcessOnFreeMemory("weakOnce", target, 0, Math.ceil(weakenThreadsForGrowth * multiplierPartProcesses)) == 0
 
         if (weakenStarted && growStarted && (growthThreads > 3 || weakenThreadsToMin > 3)) {
             weakeningTargets_Set.add(target)
@@ -558,12 +558,12 @@ export async function main(ns: NS): Promise<void> {
         ns.tprint(alert_str)
         ns.print(alert_str)
 
-        const growWaitBevoreStartFirst = Math.max(50, target.weakenTime() - target.growTime() + 50)
-        const hackWaitBevoreStartFirst = Math.max(100, growWaitBevoreStartFirst + target.growTime() - target.hackTime() + 50, target.weakenTime() - target.hackTime() + 100)
+        const growWaitBeforeStartFirst = Math.max(50, target.weakenTime() - target.growTime() + 50)
+        const hackWaitBeforeStartFirst = Math.max(100, growWaitBeforeStartFirst + target.growTime() - target.hackTime() + 50, target.weakenTime() - target.hackTime() + 100)
 
-        startProcesOnFreeMomory("weakLoop", target.hostname, Math.max(Math.floor(totalWeakenThreads), 1), 0, target.weakenThreads)
-        startProcesOnFreeMomory("growLoop", target.hostname, Math.max(Math.floor(totalGrowthThreads), 1), growWaitBevoreStartFirst, target.growthThreads)
-        startProcesOnFreeMomory("hackLoop", target.hostname, Math.max(Math.floor(totalHackThreads), 1), hackWaitBevoreStartFirst, target.hackThreads)
+        startProcessOnFreeMemory("weakLoop", target.hostname, Math.max(Math.floor(totalWeakenThreads), 1), 0, target.weakenThreads)
+        startProcessOnFreeMemory("growLoop", target.hostname, Math.max(Math.floor(totalGrowthThreads), 1), growWaitBeforeStartFirst, target.growthThreads)
+        startProcessOnFreeMemory("hackLoop", target.hostname, Math.max(Math.floor(totalHackThreads), 1), hackWaitBeforeStartFirst, target.hackThreads)
 
 
     }
@@ -586,35 +586,35 @@ export async function main(ns: NS): Promise<void> {
 
     let processId = 1
 
-    function startProcesOnFreeMomory(type: keyof typeof scripts, target: string, totalThreadcount: number, additionalWaitTime = 0, batchthreadcount = Infinity): number {
-        let threadcountToDeploy = totalThreadcount
-        // if (_threadcount == 0) _threadcount = 1
+    function startProcessOnFreeMemory(type: keyof typeof scripts, target: string, totalThreadCount: number, additionalWaitTime = 0, batchThreadCount = Infinity): number {
+        let threadCountToDeploy = totalThreadCount
+        // if (_threadCount == 0) _threadCount = 1
 
-        const batchCount = Math.ceil(Math.max(totalThreadcount, 1) / batchthreadcount)
-        const ScriptDelayPerThread = scripts[type].needsTime(target) / totalThreadcount;
+        const batchCount = Math.ceil(Math.max(totalThreadCount, 1) / batchThreadCount)
+        const ScriptDelayPerThread = scripts[type].needsTime(target) / totalThreadCount;
         const delay = batchCount > 1 ? ScriptDelayPerThread / batchCount : 0
 
         const scriptRam = ns.getScriptRam(scripts[type].filename)
         for (const server of attackers) {
-            let maxthreads = Math.floor((ns.getServerMaxRam(server) - ns.getServerUsedRam(server)) / scriptRam)
+            let maxThreads = Math.floor((ns.getServerMaxRam(server) - ns.getServerUsedRam(server)) / scriptRam)
             // Leave 64 GB free on home
-            if (server == "home") maxthreads = Math.floor((ns.getServerMaxRam(server) - ns.getServerUsedRam(server) - (RAM_LEAVE_FREE_HOME / 2)) / scriptRam)
+            if (server == "home") maxThreads = Math.floor((ns.getServerMaxRam(server) - ns.getServerUsedRam(server) - (RAM_LEAVE_FREE_HOME / 2)) / scriptRam)
 
 
-            while (maxthreads > 0) {
-                if (threadcountToDeploy <= 0) return 0
-                const deployed = Math.min(threadcountToDeploy, maxthreads, batchthreadcount)
-                const constdelayThread = additionalWaitTime
-                    + (ScriptDelayPerThread * (totalThreadcount - threadcountToDeploy))
-                const args = [target, String(processId++), (constdelayThread).toFixed(0)]
+            while (maxThreads > 0) {
+                if (threadCountToDeploy <= 0) return 0
+                const deployed = Math.min(threadCountToDeploy, maxThreads, batchThreadCount)
+                const constDelayThread = additionalWaitTime
+                    + (ScriptDelayPerThread * (totalThreadCount - threadCountToDeploy))
+                const args = [target, String(processId++), (constDelayThread).toFixed(0)]
                 ns.print(`Started running ${type} for ${target} on ${server} with ${deployed}`)
                 ns.exec(scripts[type].filename, server, deployed, ...args)
-                maxthreads -= deployed
-                threadcountToDeploy -= deployed
+                maxThreads -= deployed
+                threadCountToDeploy -= deployed
             }
         }
 
-        return threadcountToDeploy
+        return threadCountToDeploy
     }
 
 

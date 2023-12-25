@@ -42,7 +42,7 @@ export async function main(ns: NS): Promise<void> {
 
     const outputStr: string[] = [""]
 
-    outputStr.push(`home; connect darkweb; ${toBuy.map(elem => `buy ${elem}; `).join("")} buy -l; home; run startup-comands.js;`)
+    outputStr.push(`home; connect darkweb; ${toBuy.map(elem => `buy ${elem}; `).join("")} buy -l; home; run startup-commands.js;`)
 
 
     if (ns.singularity.purchaseTor()) {

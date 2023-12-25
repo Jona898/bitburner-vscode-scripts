@@ -24,11 +24,11 @@ export async function main(ns: NS): Promise<void> {
     }
 
     function listMoneyHackableServers() {
-        const hackingLevelTresh = ns.getHackingLevel() * 0.66
+        const hackingLevelThresh = ns.getHackingLevel() * 0.66
 
         const serverMoney = checkedServers.map(hostname => ns.getServer(hostname))
             .filter(server =>
-                server.requiredHackingSkill! < hackingLevelTresh
+                server.requiredHackingSkill! < hackingLevelThresh
                 && server.moneyMax! > 0)
 
         serverMoney.sort((a, b) => b.moneyMax! - a.moneyMax!)
@@ -37,7 +37,7 @@ export async function main(ns: NS): Promise<void> {
             ns.print(server.hostname
                 + " lvl " + server.requiredHackingSkill + ": "
                 + ns.formatNumber(server.moneyMax!, 2, 1000, true)
-                + " Growtime" + ns.getGrowTime(server.hostname)
+                + " GrowTime" + ns.getGrowTime(server.hostname)
                 + " HackTime" + ns.getHackTime(server.hostname)
                 + " WeakenTime" + ns.getWeakenTime(server.hostname)
                 + ns.getServerSecurityLevel(server.hostname)

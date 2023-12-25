@@ -36,13 +36,13 @@ export const pathToServer = (ns: NS) => (target: string): string => {
         .forEach(pserv => checkedServers.set(pserv, "home"))
 
 
-    function searchAdjasentServers(hostname: string) {
+    function searchAdjacentServers(hostname: string) {
         const foundServers = ns.scan(hostname)
 
         foundServers.forEach((server) => {
             if (!checkedServers.has(server)) {
                 checkedServers.set(server, hostname)
-                searchAdjasentServers(server)
+                searchAdjacentServers(server)
             }
         })
     }
@@ -54,7 +54,7 @@ export const pathToServer = (ns: NS) => (target: string): string => {
      * =======================================================
      */
 
-    searchAdjasentServers("home")
+    searchAdjacentServers("home")
 
     const path = ["backdoor; analyze;"]
 

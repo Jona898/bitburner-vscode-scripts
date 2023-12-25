@@ -8,16 +8,16 @@ export const getAllServers = ((ns: NS) => (): Set<string> => {
     const allServers = new Set<string>()
     allServers.add("home")
 
-    const findAdjasentServers = (hostname: string): void => {
+    const findAdjacentServers = (hostname: string): void => {
         ns.scan(hostname)
             .forEach((server) => {
                 if (!allServers.has(server)) {
                     allServers.add(server)
-                    findAdjasentServers(server)
+                    findAdjacentServers(server)
                 }
             })
     }
-    findAdjasentServers("home")
+    findAdjacentServers("home")
 
     return allServers
 })

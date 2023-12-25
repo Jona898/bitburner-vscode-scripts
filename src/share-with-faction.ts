@@ -46,14 +46,14 @@ export async function main(ns: NS): Promise<void> {
 
         // ns.killall(target)
         // ns.scriptKill(scriptName, target)
-        let numberoftimes = Math.floor((ns.getServerMaxRam(target) - ns.getServerUsedRam(target)) / ramScript)
+        let numberOfTimes = Math.floor((ns.getServerMaxRam(target) - ns.getServerUsedRam(target)) / ramScript)
         if (target == "home") {
-            numberoftimes = Math.floor((ns.getServerMaxRam(target) * 0.75 - ns.getServerUsedRam(target)) / ramScript)
+            numberOfTimes = Math.floor((ns.getServerMaxRam(target) * 0.75 - ns.getServerUsedRam(target)) / ramScript)
         } else {
             ns.scp(scriptName, target, "home")
         }
-        if (numberoftimes > 0)
-            ns.exec(scriptName, target, numberoftimes, target)
+        if (numberOfTimes > 0)
+            ns.exec(scriptName, target, numberOfTimes, target)
 
     }
 }
