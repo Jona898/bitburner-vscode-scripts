@@ -1,41 +1,44 @@
-/** @param {NS} ns */
-export async function main(ns) {
+import { NS } from '@ns'
 
 
-  const checkM = (c, d) => eval(c < ns.getPlayer().money / d)
+export async function main(ns: NS): Promise<void> {
+
+
+    const checkM = (c: number, d: number) => { return c < ns.getPlayer().money / d }
 
 
 
 
-  /** @type {boolean} */
-  let netManager = true; // await ns.prompt('Activate Hacknet Manager?', { type: "boolean" });
-  if (!netManager) { ns.exit() }
 
-  ns.tail();
+    ns.tail();
 
-  async function hnManager() {
+    async function hnManager() {
 
-    if (checkM(ns.hacknet.getPurchaseNodeCost(), 20)) {
-      ns.tprint(`Purchased Hacknet Node: ${ns.hacknet.purchaseNode()}`)
+        if (checkM(ns.hacknet.getPurchaseNodeCost(), 20)) {
+            ns.tprint(`Purchased Hacknet Node: ${ns.hacknet.purchaseNode()}`)
 
-    }
-    for (let i = ns.hacknet.numNodes() - 1; i >= 0; i--) {
-      for (let part of ['Level', 'Ram', 'Core']) {
-        if (checkM(ns.hacknet['get' + part + 'UpgradeCost'](i), 20)) {
-          ns.hacknet['upgrade' + part](i);
         }
-      }
+        for (let i = ns.hacknet.numNodes() - 1; i >= 0; i--) {
+            if (checkM(ns.hacknet.getLevelUpgradeCost(i), 20)) {
+                ns.hacknet.upgradeLevel(i);
+            }
+            if (checkM(ns.hacknet.getRamUpgradeCost(i), 20)) {
+                ns.hacknet.upgradeRam(i);
+            }
+            if (checkM(ns.hacknet.getCoreUpgradeCost(i), 20)) {
+                ns.hacknet.upgradeCore(i);
+            }
+        }
     }
-  }
 
 
 
-  while (true) {
-    await hnManager()
+    while (true) {
+        await hnManager()
 
 
 
 
-    await ns.sleep(1000)
-  }
+        await ns.sleep(1000)
+    }
 }

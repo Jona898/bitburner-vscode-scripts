@@ -1,7 +1,10 @@
-/** @param {NS} ns */
-export async function main(ns) {
-  globalThis.webpack_require ?? webpackChunkbitburner.push([[-1], {}, w => globalThis.webpack_require = w]);
-  Object.keys(webpack_require.m).forEach(k => Object.values(webpack_require(k)).forEach(p => p?.toPage?.('Dev')));
+import { NS } from '@ns'
+
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export async function main(ns: NS): Promise<void> {
+    globalThis.webpack_require ?? webpackChunkbitburner.push([[-1], {}, w => globalThis.webpack_require = w]);
+    Object.keys(webpack_require.m).forEach(k => Object.values(webpack_require(k)).forEach(p => p?.toPage?.('Dev')));
 }
 
 
@@ -9,7 +12,7 @@ export async function main(ns) {
 
 
 
-// export async function main(ns) {
+// export async function main(ns: NS): Promise<void> {
 //   ns.tail()
 
 //   // Navigate to dev tools in Bitburner v2
